@@ -107,9 +107,12 @@ try{
     }
 
       }
-      setState(() {
-        isUploading = false;
-      });
+    setState(() {
+      isUploading = false;
+      uploadedCount = 0;
+      totalCount = 0;
+      selectedFiles = []; // Listeyi resetle
+    });
       await FirebaseFirestore.instance.collection("uploads").add({
         'ad': _nameController.text.trim(),
         'soyad': _surnameController.text.trim(),
@@ -137,7 +140,7 @@ try{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Fotoğraf Yükle"),
+        title: const Text("Simge & Melih"),
         centerTitle: true,
       ),
       body: Padding(

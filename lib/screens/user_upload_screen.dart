@@ -24,7 +24,7 @@ class _UploadScreenState extends State<UploadScreen> {
   Future<void> _selectFiles() async {
     html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
     uploadInput.multiple = true;
-    uploadInput.accept = '*/*';
+    uploadInput.accept = 'image/*';
     uploadInput.click();
 
     uploadInput.onChange.listen((event) {
@@ -33,12 +33,13 @@ class _UploadScreenState extends State<UploadScreen> {
         setState(() {
           selectedFiles = files;
         });
+        html.document.body!.append(uploadInput);
+        uploadInput.remove();
       }
     });
   }
 
   Future<Uint8List> _readFile(html.File file) async {
-    print('⏳ Dosya okunuyor: ${file.name}');
     final reader = html.FileReader();
     final completer = Completer<Uint8List>();
 

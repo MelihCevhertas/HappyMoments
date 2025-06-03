@@ -1,38 +1,34 @@
-name: Flutter Web Deploy to Firebase Hosting
-
-on:
-  push:
-    branches:
-      - main
-
+name: Build and Release APK
+on: push
 jobs:
-  build-and-deploy:
+  hosting:
+    name: Deploy Website
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      # Checkout Repository
+      - uses: actions/checkout@v1
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      # Install Flutter command
+      - uses: subosito/flutter-action@v1
         with:
-          flutter-version: 'stable'
+          channel: 'master'
 
-      - name: Install dependencies
-        run: flutter pub get
+      # Build Website
+      - name: Build Website
+        run: |
+          flutter config --enable-web
+          flutter pub get
+          flutter build web --release
+        working-directory: ./
 
-      - name: Build Flutter web
-        run: flutter build web --release
-
-      - name: Setup Firebase CLI
+      # Deploy Firebase Hosting
+      - name: Deploy Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_LETS_WORK_HAPPY_MOMENTS }}'
+          expires: 3d
+          projectId: lets-work-insurance
           channelId: live
-          projectId: lets-work-happy-moments
-
-      - name: Deploy to Firebase Hosting
-        run: firebase deploy --only hosting --project lets-work-happy-moments
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          # channelId: 'pr-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}'
+          # Preview için bu kodu kullanıyoruz
